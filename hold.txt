@@ -1,0 +1,6 @@
+// copy the node into the spot of the one to remove
+                // then delete the leaf
+                if (curr)
+                nodeR->count = curr->count;
+                nodeR->str = curr->str;
+                delete curr;
