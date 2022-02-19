@@ -1,6 +1,7 @@
 # BinarySearchTree
 
 A Simple Binary Search Tree Implemenation
+
 Includes:
 * insert
 * remove
