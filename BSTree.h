@@ -8,10 +8,11 @@ private:
     /*
      * returns a pointer to the Node being searched for, if the node isn't in the tree it returns nullptr
      */
-    Node *findNode(string);
+    Node * findNode(string) const;
     void preOrder(Node*);
     void postOrder(Node*);
     void inOrder(Node*);
+    int getHeight(Node*) const;
 public:
     /* Constructors */
     /* Default constructor */

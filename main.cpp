@@ -52,7 +52,7 @@ int main( ) {
     while (choice != 8) {
         string str;
         if (choice == 1) {
-            cout << "Enter string to insert: ";
+            cout << "Enter string to insert: " << endl;
             getline(cin, str);
             tree.insert(str);
         } else if (choice == 2) {
@@ -71,11 +71,9 @@ int main( ) {
                 cout << "Not Found" << endl;
             }
         } else if (choice == 5) {
-            cout << "Smallest: " << endl;
-            tree.smallest();
+            cout << "Smallest: " << tree.smallest() << endl;
         } else if (choice == 6) {
-            cout << "Largest: " << endl;
-            tree.largest();
+            cout << "Largest: " << tree.largest() << endl;
         } else if (choice == 7) {
             cout << "Enter string: " << endl;
             getline(cin, str);

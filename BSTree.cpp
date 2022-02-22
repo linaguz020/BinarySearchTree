@@ -62,6 +62,7 @@ void BSTree::remove(const string &key) {
     if (!search(key)) {
         return;
     }
+    // if the node has a higher count than 1
     if (findNode(key)->count > 1) {
         findNode(key)->count--;
         return;
@@ -69,9 +70,11 @@ void BSTree::remove(const string &key) {
     Node *parent = nullptr;
     Node *curr = root;
     Node *succ = nullptr;
+    Node *pre = nullptr;
 
     while (curr != nullptr) {
         if (curr->str == key) {
+            // remove leaf
             if (curr->left == nullptr && curr->right == nullptr) {
                 if (parent == nullptr) {
                     root = nullptr;
@@ -80,36 +83,54 @@ void BSTree::remove(const string &key) {
                 } else {
                     parent->right = nullptr;
                 }
-            } else if (curr->right == nullptr) {
-                if (parent == nullptr) {
-                    root = curr->left;
-                } else if (parent->left == curr) {
-                    parent->left = curr->left;
+                // remove node that has a left child
+            } else if (curr->left != nullptr) {
+                pre = curr->left;
+                if (pre->right != nullptr) {
+                    while (pre->right != nullptr) {
+                        pre = pre->right;
+                    }
+                    string cpy = pre->str;
+                    remove(pre->str);
+                    curr->str = cpy;
                 } else {
-                    parent->right = curr->left;
+                    Node *hold = curr->right;
+                    pre->right = hold;
+                    if (parent == nullptr) {
+                        root = pre;
+                    } else if (parent->left == curr) {
+                        parent->left = pre;
+                    } else {
+                        parent->right = pre;
+                    }
                 }
-            } else if (curr->left == nullptr) {
-                if (parent == nullptr) {
-                    root = curr->right;
-                } else if (parent->left == curr) {
-                    parent->left = curr->right;
-                } else {
-                    parent->right = curr->right;
-                }
+                // remove node that only has a right child
             } else {
                 succ = curr->right;
-                while (succ->left != nullptr) {
-                    succ = succ->left;
+                if (succ->left != nullptr) {
+                    while (succ->left != nullptr) {
+                        succ = succ->left;
+;                    }
                     string cpy = succ->str;
                     remove(succ->str);
                     curr->str = cpy;
+                } else {
+                    Node *hold = curr->left;
+                    succ->left = hold;
+                    if (parent == nullptr) {
+                        root = succ;
+                    } else if (parent->left == curr) {
+                        parent->left = succ;
+                    } else {
+                        parent->right = succ;
+                    }
                 }
             }
             return;
-    } else if (curr->str < key) {
-        parent = curr;
-        curr = curr->right;
-    } else {
+        } else if (curr->str < key) {
+            parent = curr;
+            curr = curr->right;
+        } else {
             parent = curr;
             curr = curr->left;
         }
@@ -148,23 +169,12 @@ string BSTree::smallest() const {
 }
 
 int BSTree::height(const string &str) const {
-    int count = 0;
-    Node *curr = root;
-    while (curr != nullptr) {
-        if (str == curr->str) {
-            return count;
-        } else if (str < curr->str){
-            curr = curr->left;
-            count++;
-        } else {
-            curr = curr->right;
-            count++;
-        }
-    }
-    return -1;
+    Node *find = findNode(str);
+    int height = getHeight(find);
+    return height;
 }
 
-Node *BSTree::findNode(string key) {
+Node * BSTree::findNode(string key) const {
     Node *curr = root;
     while (curr != nullptr) {
         if (key == curr->str) {
@@ -218,5 +228,15 @@ void BSTree::inOrder(Node *node) {
     inOrder(node->left);
     cout << node->str << "(" << node->count << "), ";
     inOrder(node->right);
+}
+
+int BSTree::getHeight(Node *node) const {
+    if (node == nullptr) {
+        return -1;
+    }
+
+    int leftHeight = getHeight(node->left);
+    int rightHeight = getHeight(node->right);
+    return 1 + max(leftHeight, rightHeight);
 }
 

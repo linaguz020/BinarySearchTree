@@ -1,6 +1,75 @@
-// copy the node into the spot of the one to remove
-                // then delete the leaf
-                if (curr)
-                nodeR->count = curr->count;
-                nodeR->str = curr->str;
-                delete curr;
+void BSTree::remove(const string &key) {
+    if (!search(key)) {
+        return;
+    }
+    // if the node has a higher count than 1
+    if (findNode(key)->count > 1) {
+        findNode(key)->count--;
+        return;
+    }
+    Node *parent = nullptr;
+    Node *curr = root;
+    Node *succ = nullptr;
+    Node *pre = nullptr;
+
+    while (curr != nullptr) {
+        if (curr->str == key) {
+            // remove leaf
+            if (curr->left == nullptr && curr->right == nullptr) {
+                if (parent == nullptr) {
+                    root = nullptr;
+                } else if (parent->left == curr) {
+                    parent->left = nullptr;
+                } else {
+                    parent->right = nullptr;
+                }
+                // remove node with only one left child
+            } else if (curr->right == nullptr) {
+                if (parent == nullptr) {
+                    root = curr->left;
+                } else if (parent->left == curr) {
+                    parent->left = curr->left;
+                } else {
+                    parent->right = curr->left;
+                }
+                // remove node with only one right child
+            } else if (curr->left == nullptr) {
+                if (parent == nullptr) {
+                    root = curr->right;
+                } else if (parent->left == curr) {
+                    parent->left = curr->right;
+                } else {
+                    parent->right = curr->right;
+                }
+                // remove node with two children
+            } else {
+                // first try to replace node with the predecessor
+                if (curr->left != nullptr) {
+                    pre = curr->left;
+                    while (pre->right != nullptr) {
+                        pre = pre->right;
+                    }
+                    string cpy = pre->str;
+                    remove(pre->str);
+                    curr->str = cpy;
+                } else { // if not replace with successor
+                    succ = curr->right;
+                    while (succ->left != nullptr) {
+                        succ = succ->left;
+                    }
+                    string cpy = succ->str;
+                    remove(succ->str);
+                    curr->str = cpy;
+                }
+            }
+            return;
+        } else if (curr->str < key) {
+            parent = curr;
+            curr = curr->right;
+        } else {
+            parent = curr;
+            curr = curr->left;
+        }
+    }
+    return;
+}
